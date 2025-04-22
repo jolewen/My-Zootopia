@@ -11,14 +11,22 @@ def generate_animals_string(animals_data: list) -> str:
     """Generate a structured string as one html list item per animal."""
     output_str = ""
     for animal in animals_data:
-        output_str += f'<li class="cards__item">Name: {animal.get('name')}<br/>\n'
-        if animal.get('characteristics').get('diet'):
-            output_str += f"Diet: {animal.get('characteristics').get('diet')}<br/>\n"
-        if animal.get('locations'):
-            output_str += f"Location: {animal.get('locations')[0]}<br/>\n"
-        if animal.get('characteristics').get('type'):
-            output_str += f"Type: {animal.get('characteristics').get('type')}<br/>\n"
-        output_str += '</li>'
+        _name = animal["name"]
+        _diet = animal.get('characteristics').get('diet')
+        _location = animal.get('locations')[0]
+        _type = animal.get('characteristics').get('type')
+
+        output_str += (f'<li class="cards__item">\n'
+                       f'<div class="card__title">{_name}</div>\n'
+                       f'<p class="card__text">\n')
+
+        if _diet:
+            output_str += f"<strong>Diet</strong>: {_diet}<br/>\n"
+        if _location:
+            output_str += f"<strong>Location</strong>: {_location}<br/>\n"
+        if _type:
+            output_str += f"<strong>Type</strong>: {_type}<br/>\n"
+        output_str += '</p></li>\n'
     return output_str
 
 
