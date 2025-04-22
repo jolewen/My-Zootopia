@@ -7,13 +7,24 @@ def load_json(filepath: str) -> list | dict:
         return json.load(json_file)
 
 
-def extract_single_animal_display_info(animal: dict) -> tuple[str, str, str, str]:
-    """Extract information to display in the html about a single animal."""
-    _name: str = animal["name"]
+def extract_single_animal_display_info(animal: dict) -> tuple[str, dict]:
+    """Extract information to display in the html about a single animal.
+    The animal must have a name and can have additional information to be displayed."""
+    name: str = animal['name']
+
     _diet: str = animal.get('characteristics').get('diet')
     _location: str = animal.get('locations')[0]
     _type: str = animal.get('characteristics').get('type')
-    return _name, _diet, _location, _type
+    _scientific_name: str = animal.get('taxonomy').get('scientific_name')
+    _skin_type: str = animal.get('characteristics').get('skin_type')
+
+    displayed_animal_info = {'Diet': _diet,
+                             'Location': _location,
+                             'Type': _type,
+                             'Skin Type': _skin_type,
+                             'Scientific Name': _scientific_name}
+
+    return name, displayed_animal_info
 
 
 def serialize_animal_info(animals_data_list: list) -> str:
@@ -21,16 +32,20 @@ def serialize_animal_info(animals_data_list: list) -> str:
     Each animal gets its own card item.
     Add some \n and tabs for readability of the html code."""
     output_str = ''
+    skin_type_filter = input('Filter animals for skin type or press ENTER: ').lower()
     for animal_dict in animals_data_list:
-        _name, _diet, _location, _type = extract_single_animal_display_info(animal_dict)
-
+        _name, _animal_info = extract_single_animal_display_info(animal_dict)
+        if (skin_type_filter!= ''
+                and _animal_info['Skin Type'].lower() != skin_type_filter):
+            continue
         output_str += (f'<li class="cards__item">\n'
                        f'\t<div class="card__title">{_name}</div>\n'
-                       f'\t<p class="card__text">\n')
-        for label, value in [("Diet", _diet), ("Location", _location), ("Type", _type)]:
+                       f'\t<div class="card__text">\n'
+                       f'\t\t<ul>\n')
+        for label, value in _animal_info.items():
             if value:
-                output_str += f"\t\t<strong>{label}</strong>: {value}<br/>\n"
-        output_str += '\t</p>\n</li>\n'
+                output_str += f"\t\t\t<li><strong>{label}</strong>: {value}</li>\n"
+        output_str += '\t\t</ul>\n\t</div>\n</li>\n'
 
     return output_str
 
