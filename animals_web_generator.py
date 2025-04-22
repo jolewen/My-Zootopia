@@ -1,5 +1,6 @@
 import json
 
+
 def load_json(filepath):
     """Load data from .json file"""
     with open(filepath, 'r') as json_file:
@@ -22,14 +23,14 @@ def print_data(animals):
 def generate_animals_string(animals_data: list) -> str:
     output_str = ""
     for animal in animals_data:
-        output_str += f"Name: {animal.get('name')}\n"
+        output_str += f'<li class="cards__item">Name: {animal.get('name')}\n'
         if animal.get('characteristics').get('diet'):
-            output_str += f"Diet: {animal.get('characteristics').get('diet')}\n"
+            output_str += f"Diet: {animal.get('characteristics').get('diet')}<br/>\n"
         if animal.get('locations'):
-            output_str += f"Location: {animal.get('locations')[0]}\n"
+            output_str += f"Location: {animal.get('locations')[0]}<br/>\n"
         if animal.get('characteristics').get('type'):
-            output_str += f"Type: {animal.get('characteristics').get('type')}\n"
-        output_str += '\n'
+            output_str += f"Type: {animal.get('characteristics').get('type')}<br/>\n"
+        output_str += '</li>'
     return output_str
 
 
@@ -48,10 +49,9 @@ def update_html(filepath: str,
 
 def main():
     animal_data = load_json('animals-data.json')
-    print_data(animal_data)
+    animal_str = generate_animals_string(animal_data)
+    print(update_html(filepath='animals_template.html', str_input=animal_str))
 
 
 if __name__ == '__main__':
-    animal_data = load_json('animals-data.json')
-    animal_str = generate_animals_string(animal_data)
-    print(update_html(filepath='animals_template.html', str_input=animal_str))
+    main()
