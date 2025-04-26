@@ -7,16 +7,24 @@ def load_json(filepath: str) -> list | dict:
         return json.load(json_file)
 
 
+def _get_available_skin_types(animal_data:list) -> set:
+    """Private method to get available skin types from the animal data."""
+    skin_types = set()
+    for animal in animal_data:
+        if animal['characteristics'].get('skin_type'):
+            skin_types.add(animal['characteristics'].get('skin_type'))
+    return skin_types
+
 def extract_single_animal_display_info(animal: dict) -> tuple[str, dict]:
     """Extract information to display in the html about a single animal.
-    The animal must have a name and can have additional information to be displayed."""
+    The animal must have a name and the categories 'characteristics', 'locations',
+    and 'taxonomy', which can have additional information to be displayed."""
     name: str = animal['name']
-
-    _diet: str = animal.get('characteristics').get('diet')
-    _location: str = animal.get('locations')[0]
-    _type: str = animal.get('characteristics').get('type')
-    _scientific_name: str = animal.get('taxonomy').get('scientific_name')
-    _skin_type: str = animal.get('characteristics').get('skin_type')
+    _diet: str = animal['characteristics'].get('diet')
+    _location: str = animal['locations'][0]
+    _type: str = animal['characteristics'].get('type')
+    _scientific_name: str = animal['taxonomy'].get('scientific_name')
+    _skin_type: str = animal['characteristics'].get('skin_type')
 
     displayed_animal_info = {'Diet': _diet,
                              'Location': _location,
@@ -32,7 +40,9 @@ def serialize_animal_info(animals_data_list: list) -> str:
     Each animal gets its own card item.
     Add some \n and tabs for readability of the html code."""
     output_str = ''
-    skin_type_filter = input('Filter animals for skin type or press ENTER: ').lower()
+    skin_type_filter = input(f'Filter animals for skin type '
+                             f'{_get_available_skin_types(animals_data_list)} '
+                             f'or press ENTER: ').lower()
     for animal_dict in animals_data_list:
         _name, _animal_info = extract_single_animal_display_info(animal_dict)
         if (skin_type_filter!= ''
