@@ -12,7 +12,7 @@ def _get_available_skin_types(animal_data:list) -> set:
     skin_types = set()
     for animal in animal_data:
         if animal['characteristics'].get('skin_type'):
-            skin_types.add(animal['characteristics'].get('skin_type'))
+            skin_types.add(animal['characteristics'].get('skin_type').lower())
     return skin_types
 
 def extract_single_animal_display_info(animal: dict) -> tuple[str, dict]:
@@ -40,13 +40,15 @@ def serialize_animal_info(animals_data_list: list) -> str:
     Each animal gets its own card item.
     Add some \n and tabs for readability of the html code."""
     output_str = ''
+    _available_skin_types = _get_available_skin_types(animals_data_list)
     skin_type_filter = input(f'Filter animals for skin type '
-                             f'{_get_available_skin_types(animals_data_list)} '
+                             f'{_available_skin_types} '
                              f'or press ENTER: ').lower()
     for animal_dict in animals_data_list:
         _name, _animal_info = extract_single_animal_display_info(animal_dict)
-        if (skin_type_filter!= ''
-                and _animal_info['Skin Type'].lower() != skin_type_filter):
+        if (skin_type_filter != '' and
+                skin_type_filter in _available_skin_types and
+                _animal_info['Skin Type'].lower() != skin_type_filter):
             continue
         output_str += (f'<li class="cards__item">\n'
                        f'\t<div class="card__title">{_name}</div>\n'
